@@ -128,7 +128,17 @@ router.patch('/:id', authenticateToken, requireAdmin, async (req, res) => {
       { key: 'stock_quantity', value: stock_quantity, fn: (v) => (v !== undefined && !isNaN(parseInt(v, 10)) && parseInt(v, 10) >= 0 ? parseInt(v, 10) : null) },
       { key: 'category_id', value: category_id, fn: (v) => (v !== undefined ? (v || null) : null) },
       { key: 'image_url', value: image_url, fn: (v) => (v !== undefined ? (v?.trim?.() || null) : null) },
-      { key: 'is_active', value: is_active, fn: (v) => (v !== undefined ? Boolean(v) : null) }
+      { key: 'is_active', value: is_active, fn: (v) => {
+        if (v === undefined) return null;
+        if (v === true || v === 1) return true;
+        if (v === false || v === 0) return false;
+        if (typeof v === 'string') {
+          const s = v.toLowerCase().trim();
+          if (['false', '0', 'no', ''].includes(s)) return false;
+          if (['true', '1', 'yes'].includes(s)) return true;
+        }
+        return Boolean(v);
+      } }
     ];
 
     for (const { key, value, fn } of fields) {
