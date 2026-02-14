@@ -24,4 +24,20 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-module.exports = { authenticateToken, requireAdmin };
+function requireSelfOrAdmin(req, res, next) {
+  const targetId = parseInt(req.params.id, 10);
+  if (isNaN(targetId) || (req.user.id !== targetId && req.user.role !== 'admin')) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
+  next();
+}
+
+function requireSelf(req, res, next) {
+  const targetId = parseInt(req.params.id, 10);
+  if (isNaN(targetId) || req.user.id !== targetId) {
+    return res.status(403).json({ error: 'You can only update your own profile' });
+  }
+  next();
+}
+
+module.exports = { authenticateToken, requireAdmin, requireSelfOrAdmin, requireSelf };

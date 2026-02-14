@@ -16,6 +16,7 @@ Express + PostgreSQL REST API for e-commerce.
 │
 ├── routes/             # API route handlers
 │   ├── auth.js         # /api/auth (register, login, me)
+│   ├── users.js        # /api/users (get, update, delete)
 │   └── products.js     # /api/products
 │
 ├── db/                  # Database scripts
@@ -45,6 +46,9 @@ npm start
 - `POST /api/auth/register` - Create account
 - `POST /api/auth/login` - Login (returns JWT)
 - `GET /api/auth/me` - Current user (Bearer token)
+- `GET /api/users/:id` - Get user (self or admin)
+- `PATCH /api/users/:id` - Update profile (self only)
+- `DELETE /api/users/:id` - Delete account (self or admin)
 - `GET /api/products` - List products (`?category_id=`, `?search=`)
 - `GET /api/products/:id` - Get product
 - `POST /api/products` - Create (admin)
