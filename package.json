@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/kwameessien/e-com-app-rest-api#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.18.0"
   }
 }
