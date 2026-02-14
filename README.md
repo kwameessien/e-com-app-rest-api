@@ -17,7 +17,8 @@ Express + PostgreSQL REST API for e-commerce.
 ├── routes/             # API route handlers
 │   ├── auth.js         # /api/auth (register, login, me)
 │   ├── users.js        # /api/users (get, update, delete)
-│   └── products.js     # /api/products
+│   ├── products.js     # /api/products
+│   └── cart.js         # /api/cart
 │
 ├── db/                  # Database scripts
 │   └── schema.sql      # Table definitions
@@ -51,6 +52,11 @@ npm start
 - `DELETE /api/users/:id` - Delete account (self or admin)
 - `GET /api/products` - List products (`?category_id=`, `?search=`)
 - `GET /api/products/:id` - Get product
+- `GET /api/cart` - Get cart (auth)
+- `POST /api/cart/items` - Add item (auth)
+- `PATCH /api/cart/items/:id` - Update quantity (auth)
+- `DELETE /api/cart/items/:id` - Remove item (auth)
+- `DELETE /api/cart` - Clear cart (auth)
 - `POST /api/products` - Create (admin)
 - `PATCH /api/products/:id` - Update (admin)
 - `DELETE /api/products/:id` - Soft-delete (admin)
