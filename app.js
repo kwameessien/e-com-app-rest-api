@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the e-commerce REST API' });
 });
