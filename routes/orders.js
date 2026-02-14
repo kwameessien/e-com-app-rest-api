@@ -74,6 +74,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   const client = await pool.connect();
+  let transactionStarted = false;
 
   try {
     const { shipping_address_id, billing_address_id, notes } = req.body;
@@ -120,6 +121,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     await client.query('BEGIN');
+    transactionStarted = true;
 
     let subtotal = 0;
     const orderItems = cartResult.rows.map((row) => {
@@ -187,7 +189,9 @@ router.post('/', authenticateToken, async (req, res) => {
       },
     });
   } catch (err) {
-    await client.query('ROLLBACK');
+    if (transactionStarted) {
+      await client.query('ROLLBACK');
+    }
     if (err.code === '23503') {
       return res.status(400).json({ error: 'Invalid address' });
     }
