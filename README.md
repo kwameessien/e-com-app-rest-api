@@ -43,6 +43,8 @@ Set `DATABASE_URL` and `JWT_SECRET` in `.env`, then:
 npm start
 ```
 
+API documentation: **http://localhost:3000/api-docs**
+
 ## API
 
 - `POST /api/auth/register` - Create account
