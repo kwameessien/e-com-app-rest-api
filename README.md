@@ -53,6 +53,11 @@ API documentation: **http://localhost:3000/api-docs**
 - `GET /api/users/:id` - Get user (self or admin)
 - `PATCH /api/users/:id` - Update profile (self only)
 - `DELETE /api/users/:id` - Delete account (self or admin)
+- `GET /api/categories` - List categories (`?parent_id=` for root use `null`)
+- `GET /api/categories/:id` - Get category + children
+- `POST /api/categories` - Create category (admin)
+- `PATCH /api/categories/:id` - Update category (admin)
+- `DELETE /api/categories/:id` - Delete category (admin)
 - `GET /api/products` - List products (`?category_id=`, `?search=`)
 - `GET /api/products/:id` - Get product
 - `GET /api/cart` - Get cart (auth)

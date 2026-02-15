@@ -60,6 +60,15 @@ const swaggerDocument = {
           },
         },
       },
+      Category: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          name: { type: 'string' },
+          parent_id: { type: 'integer', nullable: true },
+          created_at: { type: 'string' },
+        },
+      },
       Order: {
         type: 'object',
         properties: {
@@ -179,6 +188,63 @@ const swaggerDocument = {
         security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
         responses: { 204: { description: 'Deleted' }, 400: { description: 'User has orders' }, 403: { description: 'Access denied' }, 404: { description: 'User not found' } },
+      },
+    },
+    '/api/categories': {
+      get: {
+        summary: 'List categories',
+        tags: ['Categories'],
+        parameters: [
+          { name: 'parent_id', in: 'query', description: 'Filter by parent. Use "null" for root categories.', schema: { oneOf: [{ type: 'integer' }, { type: 'string', enum: ['null'] }] } },
+        ],
+        responses: { 200: { description: 'Categories list' } },
+      },
+      post: {
+        summary: 'Create category',
+        tags: ['Categories'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['name'],
+                properties: { name: { type: 'string' }, parent_id: { type: 'integer', nullable: true } },
+              },
+            },
+          },
+        },
+        responses: { 201: { description: 'Category created' }, 400: { description: 'Validation failed or invalid parent_id' }, 403: { description: 'Admin required' } },
+      },
+    },
+    '/api/categories/{id}': {
+      get: {
+        summary: 'Get category with children',
+        tags: ['Categories'],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'Category with children array' }, 404: { description: 'Category not found' } },
+      },
+      patch: {
+        summary: 'Update category',
+        tags: ['Categories'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: { type: 'object', properties: { name: { type: 'string' }, parent_id: { type: 'integer', nullable: true } } },
+            },
+          },
+        },
+        responses: { 200: { description: 'Updated category' }, 400: { description: 'Invalid parent_id' }, 403: { description: 'Admin required' }, 404: { description: 'Category not found' } },
+      },
+      delete: {
+        summary: 'Delete category',
+        tags: ['Categories'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'Category deleted' }, 403: { description: 'Admin required' }, 404: { description: 'Category not found' } },
       },
     },
     '/api/products': {
