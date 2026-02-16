@@ -431,7 +431,7 @@ const swaggerDocument = {
             },
           },
         },
-        responses: { 201: { description: 'Review created or updated' }, 400: { description: 'rating must be 1-5' }, 404: { description: 'Product not found' } },
+        responses: { 200: { description: 'Review updated (existing)' }, 201: { description: 'Review created (new)' }, 400: { description: 'rating must be 1-5' }, 404: { description: 'Product not found' } },
       },
     },
     '/api/reviews/{id}': {
