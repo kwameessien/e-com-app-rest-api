@@ -60,6 +60,21 @@ const swaggerDocument = {
           },
         },
       },
+      Address: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          user_id: { type: 'integer' },
+          type: { type: 'string', enum: ['shipping', 'billing', 'both'] },
+          street: { type: 'string' },
+          city: { type: 'string' },
+          state: { type: 'string' },
+          postal_code: { type: 'string' },
+          country: { type: 'string' },
+          is_default: { type: 'boolean' },
+          created_at: { type: 'string' },
+        },
+      },
       Category: {
         type: 'object',
         properties: {
@@ -188,6 +203,76 @@ const swaggerDocument = {
         security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
         responses: { 204: { description: 'Deleted' }, 400: { description: 'User has orders' }, 403: { description: 'Access denied' }, 404: { description: 'User not found' } },
+      },
+    },
+    '/api/users/{id}/addresses': {
+      get: {
+        summary: 'List user addresses',
+        tags: ['Addresses'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'Addresses list' }, 403: { description: 'Can only access own addresses' } },
+      },
+      post: {
+        summary: 'Add address',
+        tags: ['Addresses'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['street', 'city', 'postal_code', 'country'],
+                properties: {
+                  type: { type: 'string', enum: ['shipping', 'billing', 'both'] },
+                  street: { type: 'string' },
+                  city: { type: 'string' },
+                  state: { type: 'string' },
+                  postal_code: { type: 'string' },
+                  country: { type: 'string' },
+                  is_default: { type: 'boolean' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 201: { description: 'Address created' }, 400: { description: 'Validation failed' }, 403: { description: 'Can only add to own account' } },
+      },
+    },
+    '/api/addresses/{id}': {
+      patch: {
+        summary: 'Update address',
+        tags: ['Addresses'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  type: { type: 'string', enum: ['shipping', 'billing', 'both'] },
+                  street: { type: 'string' },
+                  city: { type: 'string' },
+                  state: { type: 'string' },
+                  postal_code: { type: 'string' },
+                  country: { type: 'string' },
+                  is_default: { type: 'boolean' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'Updated address' }, 400: { description: 'Validation failed' }, 403: { description: 'Can only update own addresses' }, 404: { description: 'Address not found' } },
+      },
+      delete: {
+        summary: 'Delete address',
+        tags: ['Addresses'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        responses: { 204: { description: 'Deleted' }, 403: { description: 'Can only delete own addresses' }, 404: { description: 'Address not found' } },
       },
     },
     '/api/categories': {
