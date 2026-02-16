@@ -39,6 +39,60 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/:id/reviews', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const productCheck = await pool.query('SELECT id FROM products WHERE id = $1 AND is_active = true', [id]);
+    if (productCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    const result = await pool.query(
+      `SELECT r.id, r.user_id, r.rating, r.comment, r.created_at,
+              u.first_name, u.last_name
+       FROM reviews r
+       JOIN users u ON r.user_id = u.id
+       WHERE r.product_id = $1
+       ORDER BY r.created_at DESC`,
+      [id]
+    );
+    res.json({ reviews: result.rows });
+  } catch (err) {
+    console.error('Reviews list error:', err);
+    res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
+});
+
+router.post('/:id/reviews', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, comment } = req.body;
+
+    const ratingNum = rating === undefined ? null : parseInt(rating, 10);
+    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return res.status(400).json({ error: 'rating must be between 1 and 5' });
+    }
+
+    const productCheck = await pool.query('SELECT id FROM products WHERE id = $1 AND is_active = true', [id]);
+    if (productCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO reviews (user_id, product_id, rating, comment)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (user_id, product_id)
+       DO UPDATE SET rating = EXCLUDED.rating, comment = EXCLUDED.comment
+       RETURNING id, user_id, product_id, rating, comment, created_at`,
+      [req.user.id, id, ratingNum, comment ? String(comment).trim() : null]
+    );
+
+    res.status(201).json({ review: result.rows[0] });
+  } catch (err) {
+    console.error('Review create/update error:', err);
+    res.status(500).json({ error: 'Failed to save review' });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;

@@ -60,6 +60,19 @@ const swaggerDocument = {
           },
         },
       },
+      Review: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          user_id: { type: 'integer' },
+          product_id: { type: 'integer' },
+          rating: { type: 'integer', minimum: 1, maximum: 5 },
+          comment: { type: 'string' },
+          created_at: { type: 'string' },
+          first_name: { type: 'string' },
+          last_name: { type: 'string' },
+        },
+      },
       Address: {
         type: 'object',
         properties: {
@@ -391,6 +404,43 @@ const swaggerDocument = {
         security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
         responses: { 200: { description: 'Product deactivated' }, 403: { description: 'Admin required' }, 404: { description: 'Product not found' } },
+      },
+    },
+    '/api/products/{id}/reviews': {
+      get: {
+        summary: 'List reviews for product',
+        tags: ['Reviews'],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'Reviews list (with reviewer first/last name)' }, 404: { description: 'Product not found' } },
+      },
+      post: {
+        summary: 'Create or update review',
+        description: 'One review per user per product. Upserts on conflict.',
+        tags: ['Reviews'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['rating'],
+                properties: { rating: { type: 'integer', minimum: 1, maximum: 5 }, comment: { type: 'string' } },
+              },
+            },
+          },
+        },
+        responses: { 201: { description: 'Review created or updated' }, 400: { description: 'rating must be 1-5' }, 404: { description: 'Product not found' } },
+      },
+    },
+    '/api/reviews/{id}': {
+      delete: {
+        summary: 'Delete own review',
+        tags: ['Reviews'],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        responses: { 204: { description: 'Deleted' }, 403: { description: 'Can only delete own reviews' }, 404: { description: 'Review not found' } },
       },
     },
     '/api/cart': {

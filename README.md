@@ -19,6 +19,7 @@ Express + PostgreSQL REST API for e-commerce.
 │   ├── users.js        # /api/users (get, update, delete)
 │   ├── products.js     # /api/products
 │   ├── addresses.js    # /api/addresses
+│   ├── reviews.js      # /api/reviews
 │   ├── cart.js         # /api/cart
 │   └── orders.js       # /api/orders
 │
@@ -65,6 +66,9 @@ API documentation: **http://localhost:3000/api-docs**
 - `DELETE /api/categories/:id` - Delete category (admin)
 - `GET /api/products` - List products (`?category_id=`, `?search=`)
 - `GET /api/products/:id` - Get product
+- `GET /api/products/:id/reviews` - List reviews for product
+- `POST /api/products/:id/reviews` - Create/update review (auth)
+- `DELETE /api/reviews/:id` - Delete own review (auth)
 - `GET /api/cart` - Get cart (auth)
 - `POST /api/cart/items` - Add item (auth)
 - `PATCH /api/cart/items/:id` - Update quantity (auth)
